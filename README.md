@@ -1,4 +1,4 @@
-# promedex
+# Promedex Mobile Application for Android and iOS
 
 A new Rorojonggrang project.
 
