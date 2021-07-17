@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "501449324844",
+    "project_id": "galeriteknologibersama-cfb9e",
+    "storage_bucket": "galeriteknologibersama-cfb9e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:501449324844:android:1ff62cfc973ecf6422d489",
+        "android_client_info": {
+          "package_name": "com.example.galeri_teknologi_bersama"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "501449324844-bq03h61g797prqfq1g378jmuq7uucaf0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8lZoR0EKSg28Ar_uHssZ9K5SwOgRPDAk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "501449324844-bq03h61g797prqfq1g378jmuq7uucaf0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

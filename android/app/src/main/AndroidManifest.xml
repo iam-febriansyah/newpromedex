@@ -1,7 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.galeritekno.promedex">
+    package="com.example.galeri_teknologi_bersama">
+
+     <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="promedex"
+           android:usesCleartextTraffic="true"
+        android:label="galeri_teknologi_bersama"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
