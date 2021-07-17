@@ -4,4 +4,4 @@ A new Rorojonggrang project.
 
 ## Getting Started
 
-Say Bismillah ga tifus !
+Say Bismillah ga tifus !ss
