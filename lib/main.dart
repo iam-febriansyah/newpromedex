@@ -1,16 +1,27 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:galeri_teknologi_bersama/common/navigation.dart';
-import 'package:galeri_teknologi_bersama/data/api/firebase/firebase.service.dart';
+import 'package:galeri_teknologi_bersama/data/local/bio.sqlite.dart';
+import 'package:galeri_teknologi_bersama/data/model/dataorder.dart';
 import 'package:galeri_teknologi_bersama/data/model/merchant.dart';
-import 'package:galeri_teknologi_bersama/data/preferences/theme.preference.dart';
+import 'package:galeri_teknologi_bersama/data/local/theme.preference.dart';
+import 'package:galeri_teknologi_bersama/data/model/paymentresponse.dart';
+import 'package:galeri_teknologi_bersama/data/remote/firebase.service.dart';
+import 'package:galeri_teknologi_bersama/data/remote/speedlab.service.dart';
 import 'package:galeri_teknologi_bersama/provider/bottomnav.provider.dart';
+import 'package:galeri_teknologi_bersama/provider/database_provider.dart';
 import 'package:galeri_teknologi_bersama/provider/firebase.provider.dart';
+import 'package:galeri_teknologi_bersama/provider/payment.provider.dart';
 import 'package:galeri_teknologi_bersama/provider/preferences.provider.dart';
 import 'package:galeri_teknologi_bersama/trash/auth.page';
 import 'package:galeri_teknologi_bersama/ui/book.page.dart';
+import 'package:galeri_teknologi_bersama/ui/family.page.dart';
+import 'package:galeri_teknologi_bersama/ui/form_family.page.dart';
 import 'package:galeri_teknologi_bersama/ui/login.page.dart';
 import 'package:galeri_teknologi_bersama/ui/login_phone.page.dart';
+import 'package:galeri_teknologi_bersama/ui/order_completed.page.dart';
+import 'package:galeri_teknologi_bersama/ui/order_profil.page.dart';
+import 'package:galeri_teknologi_bersama/ui/order_payment.page.dart';
 import 'package:galeri_teknologi_bersama/ui/switch.page.dart';
 //import 'package:galeri_teknologi_bersama/ui/authphone.page.dart';
 import 'package:galeri_teknologi_bersama/ui/login_phone_verif.page.dart';
@@ -35,6 +46,12 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
+          create: (_) => PaymentProvider(apiService: ApiService()),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => DatabaseProvider(databaseHelper: DatabaseHelper()),
+        ),
+        ChangeNotifierProvider(
             create: (_) => PreferencesProvider(
                 themePreference: ThemePreference(
                     sharedPreferences: SharedPreferences.getInstance()))),
@@ -55,6 +72,20 @@ class MyApp extends StatelessWidget {
             LoginRegister.routeName: (context) => LoginRegister(),
             ProfilePage.routeName: (context) => ProfilePage(),
             SwitchPage.routeName: (context) => SwitchPage(),
+            FamilyListPage.routeName: (context) => FamilyListPage(),
+            FormFamilyPage.routeName: (context) => FormFamilyPage(),
+
+            OrderProfilPage.routeName: (context) => OrderProfilPage(
+                  dataOrder:
+                      ModalRoute.of(context).settings.arguments as DataOrder,
+                ),
+            PaymentMethode.routeName: (context) => PaymentMethode(
+                dataOrder:
+                    ModalRoute.of(context).settings.arguments as DataOrder),
+            PaymentCompleted.routeName: (context) => PaymentCompleted(
+                paymentResponse: ModalRoute.of(context).settings.arguments
+                    as PaymentResponse),
+
             BookPage.routeName: (context) => BookPage(
                   merchant:
                       ModalRoute.of(context).settings.arguments as Merchant,

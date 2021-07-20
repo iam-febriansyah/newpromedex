@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:galeri_teknologi_bersama/common/styles.dart';
-import 'package:galeri_teknologi_bersama/data/preferences/theme.preference.dart';
+import 'package:galeri_teknologi_bersama/data/local/theme.preference.dart';
 
 class PreferencesProvider extends ChangeNotifier {
   ThemePreference themePreference;

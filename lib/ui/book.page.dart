@@ -1,5 +1,7 @@
 import 'package:flutter/services.dart';
+import 'package:galeri_teknologi_bersama/data/model/dataorder.dart';
 import 'package:galeri_teknologi_bersama/data/model/merchant.dart';
+import 'package:galeri_teknologi_bersama/ui/order_profil.page.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -22,6 +24,11 @@ class _BookPageState extends State<BookPage> {
   int selected;
   int selectedJam;
   int selectedType;
+  final oCcy = new NumberFormat("#,##0", "en_US");
+  DataOrder dataOrder = new DataOrder();
+
+  String tanggal;
+  String jam;
 
   @override
   Widget build(BuildContext context) {
@@ -237,10 +244,11 @@ class _BookPageState extends State<BookPage> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 10, vertical: 5),
                           child: Text(
-                            "Rp " +
-                                widget.merchant
-                                    .service[widget.merchant.serviceClick].price
-                                    .toString(),
+                            "Rp. " +
+                                oCcy.format(widget
+                                    .merchant
+                                    .service[widget.merchant.serviceClick]
+                                    .price),
                             maxLines: 1,
                             style: GoogleFonts.rubik(
                               textStyle: TextStyle(
@@ -297,7 +305,7 @@ class _BookPageState extends State<BookPage> {
                   padding:
                       EdgeInsets.only(top: 15, left: 15, right: 15, bottom: 15),
                   child: ListView.builder(
-                      itemCount: 7,
+                      itemCount: 20,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (ctx, position) {
                         int day = DateTime.now().day + position;
@@ -362,11 +370,15 @@ class _BookPageState extends State<BookPage> {
                                     .add(Duration(days: position))
                                     .day
                                     .toString();
-                                selectDay = DateFormat('EE').format(
+                                selectDay = DateFormat('yMd').format(
                                     DateTime.now()
                                         .add(Duration(days: position)));
                                 selected = DateTime.now().day + position;
-                                print('Tag' + selected.toString());
+
+                                tanggal = selectDay.toString();
+
+                                print('Tag2 ' + selectDay.toString());
+                                print('Tag3 ' + selectDate.toString());
                               });
                             });
                       })),
@@ -390,6 +402,9 @@ class _BookPageState extends State<BookPage> {
                         onTap: () {
                           setState(() {
                             selectedJam = index;
+
+                            jam =
+                                widget.merchant.visitingHours[index].toString();
                           });
                           print(selectedJam.toString());
                         },
@@ -450,7 +465,7 @@ class _BookPageState extends State<BookPage> {
                   padding: EdgeInsets.all(15),
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: 3,
+                    itemCount: widget.merchant.orderType.length,
                     itemBuilder: (context, index) {
                       int item = index;
                       return GestureDetector(
@@ -458,7 +473,7 @@ class _BookPageState extends State<BookPage> {
                             setState(() {
                               selectedType = index;
                             });
-                            print(selectedType.toString());
+                            print(widget.merchant.orderType[index]);
                           },
                           child: Container(
                             width: 100,
@@ -582,15 +597,26 @@ class _BookPageState extends State<BookPage> {
           right: 0,
           child: GestureDetector(
             onTap: () async {
-              if (selected == null || selectedJam == null) {
-                snackBar("pilih tanggal dan waktu kunjungan");
-              } else {}
+              if (selected == null ||
+                  selectedJam == null ||
+                  selectedType == null) {
+                snackBar("pilih tanggal, jam dan jenis order!");
+              } else {
+                dataOrder.date = tanggal;
+                dataOrder.hours = jam;
+                dataOrder.nameItem = widget
+                    .merchant.service[widget.merchant.serviceClick].itemName;
+                dataOrder.price =
+                    widget.merchant.service[widget.merchant.serviceClick].price;
+                Navigator.pushNamed(context, OrderProfilPage.routeName,
+                    arguments: dataOrder);
+              }
             },
             child: Container(
               height: 50,
               child: Center(
                 child: Text(
-                  "Next",
+                  "Lanjutkan",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       color: Colors.white,

@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:galeri_teknologi_bersama/data/api/firebase/firebase.service.dart';
 import 'package:galeri_teknologi_bersama/data/model/userdata.dart';
+import 'package:galeri_teknologi_bersama/data/remote/firebase.service.dart';
 import 'package:galeri_teknologi_bersama/utils/result_state.dart';
 
 class FirebaseProvider extends ChangeNotifier {

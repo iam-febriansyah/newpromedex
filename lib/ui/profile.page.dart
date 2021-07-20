@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:galeri_teknologi_bersama/provider/bottomnav.provider.dart';
 import 'package:galeri_teknologi_bersama/provider/firebase.provider.dart';
+import 'package:galeri_teknologi_bersama/ui/family.page.dart';
 
 import 'package:galeri_teknologi_bersama/utils/result_state.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -119,7 +120,7 @@ class _ProfilePageState extends State<ProfilePage> {
               color: Colors.white,
               child: GestureDetector(
                 onTap: () {
-                  //dialogUsername(context);
+                  Navigator.pushNamed(context, FamilyListPage.routeName);
                 },
                 child: ListTile(
                     title: Text('Data Keluarga'),

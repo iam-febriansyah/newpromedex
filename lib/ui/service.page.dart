@@ -4,12 +4,14 @@ import 'package:galeri_teknologi_bersama/data/model/merchant.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:galeri_teknologi_bersama/ui/book.page.dart';
+import 'package:intl/intl.dart';
 
 class LayananPage extends StatelessWidget {
   static const routeName = '/service_page';
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   final Merchant data;
   LayananPage({this.data});
+  final oCcy = new NumberFormat("#,##0", "en_US");
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +50,7 @@ class LayananPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       new Text(
-                        "Rp. " + data.service[index].price.toString(),
+                        "Rp. " + oCcy.format(data.service[index].price),
                       ),
                     ],
                   ),

@@ -21,8 +21,7 @@ class MerchantPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          data[1] // + data['itemName']
-          ,
+          data[1],
           style: TextStyle(color: Colors.white),
         ),
       ),
