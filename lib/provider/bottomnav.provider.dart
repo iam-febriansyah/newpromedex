@@ -34,36 +34,110 @@ class BottomNavigationBarProvider with ChangeNotifier {
   }
 
   List<BottomNavigationBarItem> bottomNavBarItems0 = [
-    BottomNavigationBarItem(icon: Icon(MdiIcons.homeVariant), label: ""),
     BottomNavigationBarItem(
-        icon: Icon(MdiIcons.newspaperVariantOutline), label: ""),
+        icon: Image.asset(
+          "assets/images/home_variant.png",
+          height: 25,
+        ),
+        label: ""),
     BottomNavigationBarItem(
-        icon: Icon(Icons.favorite_border_outlined), label: ""),
-    BottomNavigationBarItem(icon: Icon(MdiIcons.accountOutline), label: ""),
+        icon: Image.asset(
+          "assets/images/order_outlined.png",
+          height: 25,
+        ),
+        label: ""),
+    BottomNavigationBarItem(
+        icon: Image.asset(
+          "assets/images/love_outlined.png",
+          height: 25,
+        ),
+        label: ""),
+    BottomNavigationBarItem(
+        icon: Image.asset(
+          "assets/images/profile_outlined.png",
+          height: 25,
+        ),
+        label: ""),
   ];
 
   List<BottomNavigationBarItem> bottomNavBarItems1 = [
-    BottomNavigationBarItem(icon: Icon(MdiIcons.homeVariantOutline), label: ""),
-    BottomNavigationBarItem(icon: Icon(MdiIcons.newspaperVariant), label: ""),
     BottomNavigationBarItem(
-        icon: Icon(Icons.favorite_border_outlined), label: ""),
-    BottomNavigationBarItem(icon: Icon(MdiIcons.accountOutline), label: ""),
+        icon: Image.asset(
+          "assets/images/home_outlined.png",
+          height: 25,
+        ),
+        label: ""),
+    BottomNavigationBarItem(
+        icon: Image.asset(
+          "assets/images/order_variant.png",
+          height: 25,
+        ),
+        label: ""),
+    BottomNavigationBarItem(
+        icon: Image.asset(
+          "assets/images/love_outlined.png",
+          height: 25,
+        ),
+        label: ""),
+    BottomNavigationBarItem(
+        icon: Image.asset(
+          "assets/images/profile_outlined.png",
+          height: 25,
+        ),
+        label: ""),
   ];
 
   List<BottomNavigationBarItem> bottomNavBarItems2 = [
-    BottomNavigationBarItem(icon: Icon(MdiIcons.homeVariantOutline), label: ""),
     BottomNavigationBarItem(
-        icon: Icon(MdiIcons.newspaperVariantOutline), label: ""),
-    BottomNavigationBarItem(icon: Icon(Icons.favorite), label: ""),
-    BottomNavigationBarItem(icon: Icon(MdiIcons.accountOutline), label: ""),
+        icon: Image.asset(
+          "assets/images/home_outlined.png",
+          height: 25,
+        ),
+        label: ""),
+    BottomNavigationBarItem(
+        icon: Image.asset(
+          "assets/images/order_outlined.png",
+          height: 25,
+        ),
+        label: ""),
+    BottomNavigationBarItem(
+        icon: Image.asset(
+          "assets/images/love_variant.png",
+          height: 25,
+        ),
+        label: ""),
+    BottomNavigationBarItem(
+        icon: Image.asset(
+          "assets/images/profile_outlined.png",
+          height: 25,
+        ),
+        label: ""),
   ];
 
   List<BottomNavigationBarItem> bottomNavBarItems3 = [
-    BottomNavigationBarItem(icon: Icon(MdiIcons.homeVariantOutline), label: ""),
     BottomNavigationBarItem(
-        icon: Icon(MdiIcons.newspaperVariantOutline), label: ""),
+        icon: Image.asset(
+          "assets/images/home_outlined.png",
+          height: 25,
+        ),
+        label: ""),
     BottomNavigationBarItem(
-        icon: Icon(Icons.favorite_border_outlined), label: ""),
-    BottomNavigationBarItem(icon: Icon(MdiIcons.account), label: ""),
+        icon: Image.asset(
+          "assets/images/order_outlined.png",
+          height: 25,
+        ),
+        label: ""),
+    BottomNavigationBarItem(
+        icon: Image.asset(
+          "assets/images/love_outlined.png",
+          height: 25,
+        ),
+        label: ""),
+    BottomNavigationBarItem(
+        icon: Image.asset(
+          "assets/images/profile_variant.png",
+          height: 25,
+        ),
+        label: ""),
   ];
 }

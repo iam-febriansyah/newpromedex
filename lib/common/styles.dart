@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-final Color primaryColor = Color(0xFF0c92f1);
-
-final Color darkPrimaryColor = Color(0xFF207ce5);
+final Color primaryColor = Color(0xFF43b752);
+final Color primaryColorDark = Color(0xFF41b851);
+final Color darkPrimaryColor = Color(0xFF33508a);
 
 final Color secondaryColor = Color(0xFF6B38FB);
 final Color darkSecondaryColor = Color(0xff5d99c6);
@@ -20,18 +20,12 @@ final TextTheme myTextThemeLight = TextTheme(
       GoogleFonts.merriweather(fontSize: 46, fontWeight: FontWeight.w400),
   headline4: GoogleFonts.merriweather(
       fontSize: 32, fontWeight: FontWeight.w400, letterSpacing: 0.25),
-  headline5: GoogleFonts.merriweather(
-      color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
-  headline6: GoogleFonts.merriweather(
-      color: Colors.black,
-      fontSize: 19,
-      fontWeight: FontWeight.w500,
-      letterSpacing: 0.15),
+  headline5:
+      GoogleFonts.merriweather(fontSize: 23, fontWeight: FontWeight.w400),
+  headline6: GoogleFonts.poppins(
+      fontSize: 19, fontWeight: FontWeight.w500, letterSpacing: 0.15),
   subtitle1: GoogleFonts.merriweather(
-      color: Colors.black,
-      fontSize: 15,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0.15),
+      fontSize: 15, fontWeight: FontWeight.w400, letterSpacing: 0.15),
   subtitle2: GoogleFonts.merriweather(
       fontSize: 13, fontWeight: FontWeight.w500, letterSpacing: 0.1),
   bodyText1: GoogleFonts.libreFranklin(
@@ -84,6 +78,7 @@ final TextTheme myTextThemeDark = TextTheme(
 ThemeData lightTheme = ThemeData(
   iconTheme: IconThemeData(color: darkPrimaryColor),
   primaryColor: primaryColor,
+  primaryColorDark: primaryColorDark,
   accentColor: secondaryColor,
   scaffoldBackgroundColor: background,
   visualDensity: VisualDensity.adaptivePlatformDensity,

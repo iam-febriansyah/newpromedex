@@ -1,10 +1,20 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:galeri_teknologi_bersama/common/navigation.dart';
+import 'package:galeri_teknologi_bersama/main.dart';
 import 'package:galeri_teknologi_bersama/provider/firebase.provider.dart';
 import 'package:galeri_teknologi_bersama/provider/preferences.provider.dart';
-import 'package:galeri_teknologi_bersama/ui/login.page.dart';
+import 'package:galeri_teknologi_bersama/provider/speedlab/menu.provider.dart';
+import 'package:galeri_teknologi_bersama/ui/intro/welcome.dart';
+import 'package:galeri_teknologi_bersama/ui/unused/login.page.dart';
+import 'package:galeri_teknologi_bersama/ui/navigasi.page.dart';
 import 'package:galeri_teknologi_bersama/ui/profile.page.dart';
 import 'package:galeri_teknologi_bersama/utils/datadummy.dart';
 import 'package:galeri_teknologi_bersama/utils/result_state.dart';
@@ -20,8 +30,23 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  bool isUnauthorized = false;
+  // final FirebaseAuth _auth = FirebaseAuth.instance;
+//  FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  Timer _timer;
+
+  _HomePageState() {
+    _timer = new Timer(const Duration(milliseconds: 7000), () {
+      if (isUnauthorized == true) {
+        setState(() {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (isUnauthorized == true) Navigation.intentR(Welcome.routeName);
+          });
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,29 +81,24 @@ class _HomePageState extends State<HomePage> {
 ///////////////////////////////////////////////////////////////////////////////
 
   Widget profilnotifbar(BuildContext context) {
-    return Consumer<FirebaseProvider>(
+    return Consumer<PreferencesProvider>(
       builder: (context, provider, _) {
-        provider.fetchisLogin;
-        provider.fetchdataUser;
+        provider.getName;
+        provider.getEmail;
+        provider.getPhone;
 
-        var displayName;
-
-        if (provider.state == ResultState.HasData) {
-          displayName = provider.userData.phoneNumber;
-        } else {
-          displayName = "Login/Register";
-        }
+        var displayName = provider.name;
 
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             GestureDetector(
               onTap: () {
-                if (provider.isLogin != false) {
-                  Navigator.pushNamed(context, ProfilePage.routeName);
-                } else {
-                  Navigator.pushNamed(context, LoginRegister.routeName);
-                }
+                // if (provider.isLogin != false) {
+                //   Navigator.pushNamed(context, ProfilePage.routeName);
+                // } else {
+                //   Navigator.pushNamed(context, LoginRegister.routeName);
+                // }
               },
               child: Row(
                 children: [
@@ -104,9 +124,9 @@ class _HomePageState extends State<HomePage> {
                       displayName,
                       style: GoogleFonts.mukta(
                         textStyle: TextStyle(
-                          color: Colors.blue,
+                          color: Colors.blueGrey,
                           letterSpacing: 0.1,
-                          fontSize: 15,
+                          fontSize: 18,
                         ),
                       ),
                     ),
@@ -157,39 +177,88 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget menu01(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: firestore.collection("menu1").snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return Padding(
-            padding: const EdgeInsets.only(top: 50),
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        } else {
-          List<dynamic> response = snapshot.data.docs;
-          return GridView.builder(
-              shrinkWrap: true,
-              primary: false, // agar bisa scrool listview
+    return Consumer<MenuProvider>(builder: (context, provider, _) {
+      if (provider.stateMenu == ResultState.Loading) {
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 100),
+            child: RefreshProgressIndicator(),
+          ),
+        );
+      } else if (provider.stateMenu == ResultState.HasData) {
+        var data = provider.responseMenu;
+        return GridView.builder(
+            shrinkWrap: true,
+            primary: false, // agar bisa scrool listview
 
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-              ),
-              itemCount: response.length,
-              itemBuilder: (BuildContext context, int index) {
-                return CardHome(
-                  itemID: response[index]['itemID'],
-                  itemName: response[index]['itemName'],
-                  tag: response[index]['tag'],
-                  collect: response[index]['collect'],
-                  image: response[index]['image'],
-                );
-              });
-        }
-      },
-    );
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+            ),
+            itemCount: data.menus.length,
+            itemBuilder: (BuildContext context, int index) {
+              return CardHome(
+                itemID: data.menus[index].itemId.toString(),
+                itemName: data.menus[index].itemName,
+                tag: data.menus[index].tag,
+                collect: data.menus[index].collect,
+                image: data.menus[index].image,
+              );
+            });
+      } else if (provider.stateMenu == ResultState.NoData) {
+        return Center(
+            child: Text(
+          provider.messageMenu,
+          textAlign: TextAlign.center,
+        ));
+      } else if (provider.stateMenu == ResultState.Warning) {
+        isUnauthorized = true;
+        return Center(child: Text(''));
+      } else if (provider.stateMenu == ResultState.Error) {
+        return Center(
+            child: Text(
+          provider.messageMenu,
+          textAlign: TextAlign.center,
+        ));
+      } else {
+        return Center(child: Text(''));
+      }
+    });
   }
+
+  // Widget menu01(BuildContext context) {
+  //   return StreamBuilder<QuerySnapshot>(
+  //     stream: firestore.collection("menu1").snapshots(),
+  //     builder: (context, snapshot) {
+  //       if (!snapshot.hasData) {
+  //         return Padding(
+  //           padding: const EdgeInsets.only(top: 50),
+  //           child: Center(
+  //             child: CircularProgressIndicator(),
+  //           ),
+  //         );
+  //       } else {
+  //         List<dynamic> response = snapshot.data.docs;
+  //         return GridView.builder(
+  //             shrinkWrap: true,
+  //             primary: false, // agar bisa scrool listview
+
+  //             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+  //               crossAxisCount: 3,
+  //             ),
+  //             itemCount: response.length,
+  //             itemBuilder: (BuildContext context, int index) {
+  //               return CardHome(
+  //                 itemID: response[index]['itemID'],
+  //                 itemName: response[index]['itemName'],
+  //                 tag: response[index]['tag'],
+  //                 collect: response[index]['collect'],
+  //                 image: response[index]['image'],
+  //               );
+  //             });
+  //       }
+  //     },
+  //   );
+  // }
 
   Widget menu1(BuildContext context) {
     return GridView.builder(

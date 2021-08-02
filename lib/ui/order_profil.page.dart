@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 import 'package:galeri_teknologi_bersama/data/model/bio.dart';
 import 'package:galeri_teknologi_bersama/data/model/dataorder.dart';
 import 'package:galeri_teknologi_bersama/provider/database_provider.dart';
@@ -9,6 +10,7 @@ import 'package:galeri_teknologi_bersama/ui/form_family.page.dart';
 import 'package:galeri_teknologi_bersama/ui/order_payment.page.dart';
 import 'package:galeri_teknologi_bersama/utils/result_state.dart';
 import 'package:galeri_teknologi_bersama/widget/platform.widget.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -27,6 +29,10 @@ class _OrderProfilPageState extends State<OrderProfilPage> {
   List<Bio> bio = new List<Bio>();
   // ignore: deprecated_member_use
   List<bool> checkBox = new List<bool>();
+
+  // ignore: deprecated_member_use
+  List<DataOrderTransactionDetail> transactionDetail =
+      new List<DataOrderTransactionDetail>();
 
   DataOrder _dataOrder = new DataOrder();
 
@@ -49,37 +55,95 @@ class _OrderProfilPageState extends State<OrderProfilPage> {
                   builder: (context, snapshot) {
                     var isBookmarked = snapshot.data ?? false;
 
-                    return ListTile(
-                      leading: Checkbox(
-                        activeColor: Colors.blue,
-                        value: checkBox[
-                            index], //data.isChecked == 0 ? false : true,
-                        onChanged: (value) {
-                          setState(() {
-                            // data.isChecked = value == false ? 0 : 1;
-                            checkBox[index] = value == false ? false : true;
-                            if (value == true) {
-                              bio.add(data);
-                            } else {
-                              bio.removeWhere((item) => item.id == data.id);
-                            }
-                            print(bio);
-                          });
-                        },
-                      ),
-                      title: Text(data.nik),
-                      subtitle: Text(data.name),
-                      trailing: isBookmarked
-                          ? IconButton(
-                              icon: Icon(MdiIcons.deleteVariant),
-                              color: Colors.blue,
-                              onPressed: () =>
-                                  provider.removeBookmark(data.id.toString()),
-                            )
-                          : IconButton(
-                              icon: Icon(Icons.bookmark_border),
-                              color: Theme.of(context).accentColor,
+                    return Column(
+                      children: [
+                        Material(
+                          color: Colors.white,
+                          child: ListTile(
+                            leading: Checkbox(
+                              activeColor: Colors.green.withOpacity(0.8),
+                              value: checkBox[index],
+                              onChanged: (value) {
+                                setState(() {
+                                  checkBox[index] =
+                                      value == false ? false : true;
+                                  if (value == true) {
+                                    transactionDetail
+                                        .add(new DataOrderTransactionDetail(
+                                      clientId: 1,
+                                      identityNumber: data.identityNumber,
+                                      identityParentNumber:
+                                          data.identityParentNumber,
+                                      name: data.name,
+                                      gender: data.gender,
+                                      birthDay: data.birthDay,
+                                      birthPlace: data.birthPlace,
+                                      nationality: data.nationality,
+                                      address: data.address,
+                                      phone: data.phone,
+                                      email: data.email,
+                                      serviceClientId: _dataOrder
+                                          .transaction.serviceClientId,
+                                      price: _dataOrder.transaction.price,
+                                      orderType:
+                                          _dataOrder.transaction.orderType,
+                                      dateReservation: _dataOrder
+                                          .transaction.dateReservation,
+                                      hourReservation: _dataOrder
+                                          .transaction.hourReservation,
+                                    ));
+                                    // bio.add(data);
+                                  } else {
+                                    transactionDetail.removeWhere((item) =>
+                                        item.identityNumber ==
+                                            data.identityNumber &&
+                                        item.name == data.name);
+                                    // bio.removeWhere((item) => item.id == data.id);
+                                  }
+                                  print(transactionDetail);
+                                  //print(bio);
+                                });
+                              },
                             ),
+                            title: Text(
+                              data.name,
+                              style: GoogleFonts.poppins(
+                                textStyle: TextStyle(
+                                    color: Colors.black,
+                                    letterSpacing: 0.5,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                            subtitle: Text(
+                              data.identityNumber,
+                              style: GoogleFonts.poppins(
+                                textStyle: TextStyle(
+                                    color: Colors.blueGrey,
+                                    letterSpacing: 0.1,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                            trailing: isBookmarked
+                                ? IconButton(
+                                    icon: Icon(FlutterIcons.ios_trash_ion),
+                                    color: Colors.black.withOpacity(0.6),
+                                    onPressed: () => provider
+                                        .removeBookmark(data.id.toString()),
+                                  )
+                                : IconButton(
+                                    icon: Icon(Icons.bookmark_border),
+                                    color: Theme.of(context).primaryColorDark,
+                                  ),
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 0, bottom: 0),
+                          height: 5,
+                          color: Colors.grey.withOpacity(0.2),
+                        ),
+                      ],
                     );
                   });
             },
@@ -125,8 +189,8 @@ class _OrderProfilPageState extends State<OrderProfilPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            'Data Reservasi',
-            style: TextStyle(fontSize: 17, color: Colors.white),
+            'Pilih Pasien',
+            style: TextStyle(fontSize: 18, color: Colors.white),
           ),
           actions: [
             GestureDetector(
@@ -139,12 +203,17 @@ class _OrderProfilPageState extends State<OrderProfilPage> {
                     child: Row(
                       children: [
                         Text(
-                          "Tambah ",
-                          style: TextStyle(fontSize: 16, color: Colors.white),
+                          "Tambah   ",
+                          style: GoogleFonts.poppins(
+                            textStyle: TextStyle(
+                                color: Colors.white,
+                                letterSpacing: 0.1,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500),
+                          ),
                         ),
                         Icon(
-                          Icons.add,
-                          size: 18,
+                          FlutterIcons.adduser_ant,
                         )
                       ],
                     ),
@@ -159,11 +228,10 @@ class _OrderProfilPageState extends State<OrderProfilPage> {
             ),
             GestureDetector(
               onTap: () {
-                if (bio.length == 0) {
-                  snackBar('profil reservasi belum dipilih');
+                if (transactionDetail.length == 0) {
+                  snackBar('profil pasien belum dipilih');
                 } else {
-                  _dataOrder.profilPasien = bio;
-                  _dataOrder.quantity = bio.length;
+                  _dataOrder.transactionDetails = transactionDetail;
 
                   Navigator.pushNamed(context, PaymentMethode.routeName,
                       arguments: _dataOrder);
@@ -188,7 +256,7 @@ class _OrderProfilPageState extends State<OrderProfilPage> {
                     gradient: LinearGradient(
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
-                        colors: [Color(0xFF207ce5), Color(0xFF0c92f1)])),
+                        colors: [Color(0xFF43b752), Color(0xFF43b752)])),
               ),
             ),
           ],

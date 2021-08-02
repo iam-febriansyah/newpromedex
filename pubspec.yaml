@@ -35,21 +35,27 @@ dependencies:
   firebase_core: ^1.2.0
   firebase_auth: ^1.2.0
   cloud_firestore: ^2.2.0
+  firebase_messaging: ^10.0.0
+  firebase_analytics: ^8.1.0
+
   sms_autofill: ^1.2.6
   pin_code_fields: ^7.2.0
   font_awesome_flutter: ^9.1.0
   #flutter_phoenix: "^1.0.0"
   cached_network_image: ^3.0.0
-
-
-
-
-
-
-  
-
-
+  sqflite: ^2.0.0+3
   material_design_icons_flutter: ^4.0.5955
+
+  # //flutter_screenutil: ^5.0.0+2
+  flutter_icons: ^1.1.0
+  dio: ^4.0.0
+  flutter_polyline_points: ^0.2.6
+  google_maps_flutter: ^2.0.2
+  location: ^4.3.0
+  flutter_local_notifications: ^5.0.0+4
+  rxdart: ^0.26.0
+
+
 
 
 
@@ -75,21 +81,22 @@ flutter:
     - assets/search.png
     - assets/notification.png
     - assets/man.png
+    - assets/marker.png
     - assets/ambulance.png
     - assets/homecare.png
     - assets/labtest.png
     - assets/rapid.png
     - assets/rapid2.png
     - assets/vaccine.png
-    - assets/images/1.png
-    - assets/images/2.png
-    - assets/images/3.png
-    - assets/images/4.png
     - assets/placeholder.png
     - assets/verify.png
     - assets/otp.flr
     - assets/otp.gif
     - assets/sehat.png
+    - assets/bca.png
+    - assets/bni.png
+    - assets/images/
+
 
 
 

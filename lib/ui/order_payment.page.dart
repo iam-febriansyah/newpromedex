@@ -2,11 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:galeri_teknologi_bersama/data/model/dataorder.dart';
-import 'package:galeri_teknologi_bersama/data/model/paymentrequest.dart';
-import 'package:galeri_teknologi_bersama/data/model/paymentstatus.dart';
-import 'package:galeri_teknologi_bersama/provider/payment.provider.dart';
+import 'package:galeri_teknologi_bersama/data/model/request/payment.dart';
+import 'package:galeri_teknologi_bersama/data/model/response/listswabber.dart';
+import 'package:galeri_teknologi_bersama/provider/speedlab/menu.provider.dart';
+
+import 'package:galeri_teknologi_bersama/provider/speedlab/payment.provider.dart';
 import 'package:galeri_teknologi_bersama/ui/order_completed.page.dart';
-import 'package:galeri_teknologi_bersama/utils/result_state.dart';
+import 'package:galeri_teknologi_bersama/ui/order_track_location.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
@@ -27,29 +29,62 @@ class PaymentMethode extends StatefulWidget {
 class _PaymentMethodeState extends State<PaymentMethode> {
   BANK _character = BANK.bca;
   String _bank = "BCA";
-  DataOrder _dataOrder = new DataOrder();
+  List<DataOrderTransactionDetail> _dataOrderTransactionDetail = [];
+  ResponseListSwabber responseListSwabber = new ResponseListSwabber();
 
-  Future<Transaction> ftranscation() async {
-    var transactions = Transaction();
+  Future<RequestTransaction> ftranscation() async {
+    var providerMenu = Provider.of<MenuProvider>(context, listen: false);
 
-    transactions.bank = _bank;
-    transactions.orderId =
-        "INV" + DateTime.now().toString().substring(0, 10) + "-" + "01342F0";
-    transactions.grossAmount = _dataOrder.price * _dataOrder.quantity;
-    transactions.customerEmail = _dataOrder.profilPasien[0].name;
-    transactions.customerName = _dataOrder.profilPasien[0].name;
-    transactions.customerPhone = _dataOrder.profilPasien[0].name;
-    transactions.expired = 120;
+    var transactions = RequestTransaction();
+    transactions.channel = _bank;
+    transactions.customerEmail = "test123@gmail.com";
+    transactions.customerName = "test";
+    transactions.customerPhone = "08129000";
+
+    if (providerMenu.tagFilter.contains("homecare")) {
+      var idSwabber = providerMenu.responseListSwabber.listSwabbers[1].id;
+      transactions.idswabber = idSwabber;
+      transactions.latitude = providerMenu.userLocationLatitude;
+      transactions.longitude = providerMenu.userLocationLongitude;
+      transactions.type = "homecare";
+      transactions.address = providerMenu.userLocationAddres;
+
+      print("homecare  ");
+    } else {
+      transactions.idswabber = null;
+      transactions.latitude = "";
+
+      transactions.longitude = "";
+      transactions.type = "walkin";
+      print("walk in  ");
+    }
 
     return transactions;
   }
 
-  Future<List<ItemOrder>> ftranscationDetails() async {
-    var transactionsDetails = List<ItemOrder>();
+  Future<List<RequestTransactionDetail>> ftranscationDetails() async {
+    var transactionsDetails = List<RequestTransactionDetail>();
 
-    for (int i = 0; i < _dataOrder.profilPasien.length; i++) {
-      transactionsDetails.add(ItemOrder(
-          price: _dataOrder.price, quantity: 1, name: _dataOrder.nameItem));
+    for (int i = 0; i < _dataOrderTransactionDetail.length; i++) {
+      transactionsDetails.add(RequestTransactionDetail(
+        clientId: _dataOrderTransactionDetail[i].clientId,
+        identityNumber: _dataOrderTransactionDetail[i].identityNumber,
+        identityParentNumber:
+            _dataOrderTransactionDetail[i].identityParentNumber,
+        name: _dataOrderTransactionDetail[i].name,
+        gender: _dataOrderTransactionDetail[i].gender,
+        birthDay: _dataOrderTransactionDetail[i].birthDay,
+        birthPlace: _dataOrderTransactionDetail[i].birthPlace,
+        nationality: _dataOrderTransactionDetail[i].nationality,
+        address: _dataOrderTransactionDetail[i].address,
+        phone: _dataOrderTransactionDetail[i].phone,
+        email: _dataOrderTransactionDetail[i].email,
+        serviceClientId: _dataOrderTransactionDetail[i].serviceClientId,
+        price: _dataOrderTransactionDetail[i].price,
+        orderType: _dataOrderTransactionDetail[i].orderType,
+        dateReservation: _dataOrderTransactionDetail[i].dateReservation,
+        hourReservation: _dataOrderTransactionDetail[i].hourReservation,
+      ));
       print("==================== : " + i.toString());
     }
 
@@ -58,7 +93,9 @@ class _PaymentMethodeState extends State<PaymentMethode> {
 
   @override
   Widget build(BuildContext context) {
-    _dataOrder = widget.dataOrder;
+    var providerMenu = Provider.of<MenuProvider>(context);
+
+    _dataOrderTransactionDetail = widget.dataOrder.transactionDetails;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -75,7 +112,7 @@ class _PaymentMethodeState extends State<PaymentMethode> {
                 ListTile(
                   title: const Text('BANK BCA'),
                   leading: Radio<BANK>(
-                    activeColor: Colors.blue,
+                    activeColor: Colors.green.withOpacity(0.7),
                     value: BANK.bca,
                     groupValue: _character,
                     onChanged: (BANK value) {
@@ -93,7 +130,7 @@ class _PaymentMethodeState extends State<PaymentMethode> {
                     ],
                   ),
                   leading: Radio<BANK>(
-                    activeColor: Colors.blue,
+                    activeColor: Colors.green.withOpacity(0.7),
                     value: BANK.bni,
                     groupValue: _character,
                     onChanged: (BANK value) {
@@ -113,12 +150,17 @@ class _PaymentMethodeState extends State<PaymentMethode> {
                 var transactions = await ftranscation();
                 var transactionsDetails = await ftranscationDetails();
 
-                provider.setTransactions(transactions);
-                provider.setTransactionsDetails(transactionsDetails);
-                provider.fetch;
+                await provider.setTransactions(transactions);
+                await provider.setTransactionsDetails(transactionsDetails);
+                await provider.fetch;
 
-                Navigator.pushReplacementNamed(
-                    context, PaymentCompleted.routeName);
+                if (providerMenu.tagFilter.contains("homecare")) {
+                  Navigator.pushReplacementNamed(
+                      context, PaymentTrack.routeName);
+                } else {
+                  Navigator.pushReplacementNamed(
+                      context, PaymentCompleted.routeName);
+                }
               },
               child: Container(
                 height: 50,
@@ -139,7 +181,7 @@ class _PaymentMethodeState extends State<PaymentMethode> {
                     gradient: LinearGradient(
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
-                        colors: [Color(0xFF207ce5), Color(0xFF0c92f1)])),
+                        colors: [Color(0xFF43b752), Color(0xFF43b752)])),
               ),
             );
           }),

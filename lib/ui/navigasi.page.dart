@@ -1,16 +1,17 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+import 'package:galeri_teknologi_bersama/main.dart';
 import 'package:galeri_teknologi_bersama/provider/bottomnav.provider.dart';
-import 'package:galeri_teknologi_bersama/provider/firebase.provider.dart';
+import 'package:galeri_teknologi_bersama/provider/speedlab/menu.provider.dart';
 import 'package:galeri_teknologi_bersama/ui/home.page.dart';
-import 'package:galeri_teknologi_bersama/ui/login.page.dart';
 import 'package:galeri_teknologi_bersama/ui/profile.page.dart';
-import 'package:galeri_teknologi_bersama/ui/switch.page.dart';
-
+import 'package:galeri_teknologi_bersama/ui/unused/switch.page.dart';
 import 'package:galeri_teknologi_bersama/widget/platform.widget.dart';
-
 import 'package:provider/provider.dart';
 
 class NavPage extends StatefulWidget {
@@ -20,13 +21,53 @@ class NavPage extends StatefulWidget {
 }
 
 class _NavPageState extends State<NavPage> {
+  @override
+  void initState() {
+    super.initState();
+
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage message) {
+      if (message != null) {
+        Navigator.pushNamed(
+          context,
+          NavPage.routeName,
+        );
+      }
+    });
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification notification = message.notification;
+      AndroidNotification android = message.notification?.android;
+      if (notification != null && android != null && !kIsWeb) {
+        flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                channel.description,
+                // TODO add a proper drawable resource to android, for now using
+                //      one that already exists in example app.
+                icon: 'launch_background',
+              ),
+            ));
+      }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('A new onMessageOpenedApp event was published!');
+      Navigator.pushNamed(context, NavPage.routeName);
+    });
+  }
+
   List<Widget> listWidget = [
     HomePage(),
     HomePage(),
     HomePage(),
-    SwitchPage(),
-
-    //   Navigator.pushNamed(context, ProfilePage);
+    ProfilePage(),
   ];
 
   Widget buildAndroid(BuildContext context) {
@@ -46,6 +87,14 @@ class _NavPageState extends State<NavPage> {
         bottomNavigationBar: Container(
           margin: EdgeInsets.only(left: 16, right: 16, bottom: 20),
           decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 1,
+                  blurRadius: 1,
+                  offset: Offset(1, 1), // changes position of shadow
+                ),
+              ],
               borderRadius: BorderRadius.only(
                 topRight: Radius.circular(30),
                 topLeft: Radius.circular(30),
@@ -55,7 +104,7 @@ class _NavPageState extends State<NavPage> {
               gradient: LinearGradient(
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
-                  colors: [Color(0xFF207ce5), Color(0xFF0c92f1)])),
+                  colors: [Color(0xFF43b752), Color(0xFF43b752)])),
           child: Padding(
             padding:
                 const EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 16),

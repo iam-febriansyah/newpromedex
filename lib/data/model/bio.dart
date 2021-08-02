@@ -4,65 +4,62 @@
 
 import 'dart:convert';
 
-List<Bio> bioFromJson(String str) =>
-    List<Bio>.from(json.decode(str).map((x) => Bio.fromJson(x)));
+Bio bioFromJson(String str) => Bio.fromJson(json.decode(str));
 
-String bioToJson(List<Bio> data) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String bioToJson(Bio data) => json.encode(data.toJson());
 
 class Bio {
   Bio({
     this.id,
-    this.nik,
+    this.identityNumber,
+    this.identityParentNumber,
     this.name,
-    this.isChecked,
-
-    // this.phoneNumber,
-    // this.email,
-    // this.gender,
-    // this.birthPlace,
-    // this.birthDate,
-    // this.adress,
-    // this.country,
+    this.gender,
+    this.birthDay,
+    this.birthPlace,
+    this.nationality,
+    this.address,
+    this.phone,
+    this.email,
   });
 
   int id;
-  String nik;
+  String identityNumber;
+  String identityParentNumber;
   String name;
-  int isChecked;
-  // String phoneNumber;
-  // String email;
-  // bool gender;
-  // String birthPlace;
-  // String birthDate;
-  // String adress;
-  // String country;
+  String gender;
+  String birthDay;
+  String birthPlace;
+  String nationality;
+  String address;
+  String phone;
+  String email;
 
   factory Bio.fromJson(Map<String, dynamic> json) => Bio(
         id: json["id"],
-        nik: json["nik"],
+        identityNumber: json["identityNumber"],
+        identityParentNumber: json["identityParentNumber"],
         name: json["name"],
-        isChecked: json["isChecked"],
-        // phoneNumber: json["phoneNumber"],
-        // email: json["email"],
-        // gender: json["gender"],
-        // birthPlace: json["birthPlace"],
-        // birthDate: json["birthDate"],
-        // adress: json["adress"],
-        // country: json["country"],
+        gender: json["gender"],
+        birthDay: json["birthDay"],
+        birthPlace: json["birthPlace"],
+        nationality: json["nationality"],
+        address: json["address"],
+        phone: json["phone"],
+        email: json["email"],
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "nik": nik,
+        "identityNumber": identityNumber,
+        "identityParentNumber": identityParentNumber,
         "name": name,
-        "isChecked": isChecked,
-        // "phoneNumber": phoneNumber,
-        // "email": email,
-        // "gender": gender,
-        // "birthPlace": birthPlace,
-        // "birthDate": birthDate,
-        // "adress": adress,
-        // "country": country,
+        "gender": gender,
+        "birthDay": birthDay,
+        "birthPlace": birthPlace,
+        "nationality": nationality,
+        "address": address,
+        "phone": phone,
+        "email": email,
       };
 }

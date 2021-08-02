@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:galeri_teknologi_bersama/provider/bottomnav.provider.dart';
 import 'package:galeri_teknologi_bersama/provider/firebase.provider.dart';
+import 'package:galeri_teknologi_bersama/provider/preferences.provider.dart';
 import 'package:galeri_teknologi_bersama/ui/family.page.dart';
 
 import 'package:galeri_teknologi_bersama/utils/result_state.dart';
@@ -26,14 +27,14 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => afterbuild(context));
+    // WidgetsBinding.instance.addPostFrameCallback((_) => afterbuild(context));
   }
 
-  void afterbuild(BuildContext context) {
-    var provider =
-        Provider.of<BottomNavigationBarProvider>(context, listen: false);
-    provider.currentIndex = 0;
-  }
+  // void afterbuild(BuildContext context) {
+  //   var provider =
+  //       Provider.of<BottomNavigationBarProvider>(context, listen: false);
+  //   provider.currentIndex = 0;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -49,15 +50,11 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildList(BuildContext context) {
-    return Consumer<FirebaseProvider>(
+    return Consumer<PreferencesProvider>(
       builder: (context, provider, _) {
-        provider.fetchdataUser;
-
-        if (provider.state == ResultState.HasData) {
-          name = provider.userData.displayName;
-          email = provider.userData.email;
-          phone = provider.userData.phoneNumber;
-        }
+        name = provider.name;
+        email = provider.email;
+        phone = provider.phone;
 
         return ListView(
           children: [
@@ -120,7 +117,7 @@ class _ProfilePageState extends State<ProfilePage> {
               color: Colors.white,
               child: GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, FamilyListPage.routeName);
+                  Navigator.pushNamed(context, ListFamilyPage.routeName);
                 },
                 child: ListTile(
                     title: Text('Data Keluarga'),
@@ -137,7 +134,8 @@ class _ProfilePageState extends State<ProfilePage> {
               color: Colors.white,
               child: GestureDetector(
                   onTap: () async {
-                    logout(context);
+                    provider.setAccesToken("kosong");
+
                     Navigator.pop(context);
                   },
                   child: ListTile(

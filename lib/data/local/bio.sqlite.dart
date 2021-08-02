@@ -18,12 +18,18 @@ class DatabaseHelper {
     var db = openDatabase(
       '$path/d93e38491636a26acc70e8380eaf8d49c89c4979.db',
       onCreate: (db, version) async {
-        await db.execute(
-            '''CREATE TABLE $_tblUsers (
+        await db.execute('''CREATE TABLE $_tblUsers (
               id integer primary key autoincrement, 
-              nik TEXT,
-              name TEXT, 
-              isChecked integer
+      identityNumber TEXT,
+   identityParentNumber TEXT,
+  name TEXT,
+  gender TEXT ,
+  birthDay TEXT,
+  birthPlace TEXT,
+  nationality TEXT,
+  address TEXT,
+  phone TEXT,
+  email TEXT
            )     
         ''');
       },
