@@ -173,9 +173,20 @@ class Login extends StatelessWidget {
                                       ResultState.HasData) {
                                     await providerMenu.fetchMenu;
                                     await providerMenu.fetchTokenFcm;
-                                    Navigation.intentR(
-                                      NavPage.routeName,
-                                    );
+
+                                    providerUser.setName(providerLogin
+                                        .responseLogin.dataUser.name);
+
+                                    providerUser.setEmail(providerLogin
+                                        .responseLogin.dataUser.email);
+
+                                    providerUser.setPhone(providerLogin
+                                        .responseLogin.dataUser.phone);
+
+                                    Navigator.of(context)
+                                        .pushNamedAndRemoveUntil(
+                                            NavPage.routeName,
+                                            (Route<dynamic> route) => false);
                                   }
                                 },
                               ),

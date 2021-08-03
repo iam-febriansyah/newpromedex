@@ -138,7 +138,7 @@ class MenuProvider extends ChangeNotifier {
   ResultState get stateListSwabber => _stateListSwabber;
   ResponseListSwabber get responseListSwabber => _responseListSwabber;
 
-  Future<dynamic> get fetchListSwabber => _fetchListSwabber();
+  //Future<dynamic> get fetchListSwabber => _fetchListSwabber();
 
   Future<dynamic> _fetchListSwabber() async {
     try {

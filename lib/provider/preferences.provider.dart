@@ -9,9 +9,9 @@ class PreferencesProvider extends ChangeNotifier {
 
   PreferencesProvider({this.themePreference, this.userPreference}) {
     _getTheme();
-    _getName();
-    _getEmail();
-    _getPhone();
+    // _getName();
+    // _getEmail();
+    // _getPhone();
   }
 
   bool _isDarkTheme = false;
@@ -58,20 +58,30 @@ class PreferencesProvider extends ChangeNotifier {
     _getName();
   }
 
-  //
+  ////////////////
   String _phone = "";
   String get phone => _phone;
   void get getPhone => _getPhone();
+
+  void setPhone(String value) {
+    userPreference.setPhone(value);
+    _getPhone();
+  }
 
   void _getPhone() async {
     _phone = await userPreference.phone;
     notifyListeners();
   }
 
-  //
+  //  ////////////////
   String _email = "";
   String get email => _email;
   void get getEmail => _getEmail();
+
+  void setEmail(String value) {
+    userPreference.setEmail(value);
+    _getEmail();
+  }
 
   void _getEmail() async {
     _email = await userPreference.email;

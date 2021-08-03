@@ -32,6 +32,10 @@ class _PaymentMethodeState extends State<PaymentMethode> {
   List<DataOrderTransactionDetail> _dataOrderTransactionDetail = [];
   ResponseListSwabber responseListSwabber = new ResponseListSwabber();
 
+  bool onPressPayment;
+
+  Color colorRegistrasi = Color(0xFF43b752);
+
   Future<RequestTransaction> ftranscation() async {
     var providerMenu = Provider.of<MenuProvider>(context, listen: false);
 
@@ -42,8 +46,8 @@ class _PaymentMethodeState extends State<PaymentMethode> {
     transactions.customerPhone = "08129000";
 
     if (providerMenu.tagFilter.contains("homecare")) {
-      var idSwabber = providerMenu.responseListSwabber.listSwabbers[1].id;
-      transactions.idswabber = idSwabber;
+      // var idSwabber = providerMenu.responseListSwabber.listSwabbers[1].id;
+      transactions.idswabber = 100;
       transactions.latitude = providerMenu.userLocationLatitude;
       transactions.longitude = providerMenu.userLocationLongitude;
       transactions.type = "homecare";
@@ -147,6 +151,9 @@ class _PaymentMethodeState extends State<PaymentMethode> {
           Consumer<PaymentProvider>(builder: (context, provider, _) {
             return GestureDetector(
               onTap: () async {
+                setState(() {
+                  colorRegistrasi = Color(0xFF43b752).withOpacity(0.6);
+                });
                 var transactions = await ftranscation();
                 var transactionsDetails = await ftranscationDetails();
 
@@ -181,7 +188,7 @@ class _PaymentMethodeState extends State<PaymentMethode> {
                     gradient: LinearGradient(
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
-                        colors: [Color(0xFF43b752), Color(0xFF43b752)])),
+                        colors: [colorRegistrasi, colorRegistrasi])),
               ),
             );
           }),

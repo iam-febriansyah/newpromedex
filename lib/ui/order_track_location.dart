@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:galeri_teknologi_bersama/data/model/myorder.dart';
 import 'package:galeri_teknologi_bersama/data/model/response/directions_model.dart';
 import 'package:galeri_teknologi_bersama/provider/preferences.provider.dart';
@@ -13,6 +15,7 @@ import 'package:galeri_teknologi_bersama/widget/app_button.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:galeri_teknologi_bersama/main.dart';
 
 class PaymentTrack extends StatefulWidget {
   static const routeName = '/paymentTrack_page';
@@ -32,7 +35,7 @@ class _PaymentTrackState extends State<PaymentTrack> {
   Timer _timer;
 
   _PaymentTrackState() {
-    _timer = new Timer(const Duration(milliseconds: 5000), () {
+    _timer = new Timer(const Duration(milliseconds: 7000), () {
       if (_myLatitude != null) {
         setState(() {
           _myLocation = Marker(
@@ -52,30 +55,78 @@ class _PaymentTrackState extends State<PaymentTrack> {
     super.initState();
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      RemoteNotification notification = message.notification;
+      AndroidNotification android = message.notification?.android;
+      if (notification != null && android != null && !kIsWeb) {
+        flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                channel.description,
+                // TODO add a proper drawable resource to android, for now using
+                //      one that already exists in example app.
+                icon: 'launch_background',
+              ),
+            ));
+
+        //  debugPrint(message.data.toString(), wrapWidth: 1024);
+      }
+      print(" =========== from onMessage.listen");
       myOrder = new MyOrder();
       print(" =========== from onMessage.listen");
       print(message.notification.title);
       debugPrint(message.data.toString(), wrapWidth: 1024);
 
-      myOrder.channel = message.data['channel'];
-      myOrder.clientId = message.data['clientId'];
-      myOrder.expiredTime = message.data['expiredTime'];
-      myOrder.invoiceNumber = message.data['invoiceNumber'];
-      myOrder.status = message.data['status'];
-      myOrder.totalPrice = message.data['totalPrice'];
-      myOrder.vaNumber = message.data['vaNumber'];
+      if (message.data['vaNumber'] != null) {
+        if (mounted) {
+          setState(() {
+            myOrder.channel = message.data['channel'];
+            myOrder.clientId = message.data['clientId'];
+            myOrder.expiredTime = message.data['expiredTime'];
+            myOrder.invoiceNumber = message.data['invoiceNumber'];
+            myOrder.status = message.data['status'];
+            myOrder.totalPrice = message.data['totalPrice'];
+            myOrder.vaNumber = message.data['vaNumber'];
+            swabber = true;
+            print(myOrder.vaNumber + "Va  number");
+          });
+        }
+      }
+    });
 
-      setState(() {
-        swabber = true;
-      });
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+      myOrder = new MyOrder();
+      print(" =========== from onMessage.listen");
+      print(message.notification.title);
+      debugPrint(message.data.toString(), wrapWidth: 1024);
+
+      if (message.data['vaNumber'] != null) {
+        if (mounted) {
+          setState(() {
+            myOrder.channel = message.data['channel'];
+            myOrder.clientId = message.data['clientId'];
+            myOrder.expiredTime = message.data['expiredTime'];
+            myOrder.invoiceNumber = message.data['invoiceNumber'];
+            myOrder.status = message.data['status'];
+            myOrder.totalPrice = message.data['totalPrice'];
+            myOrder.vaNumber = message.data['vaNumber'];
+            swabber = true;
+            print(myOrder.vaNumber + "Va  number");
+          });
+        }
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     var menuProvider = Provider.of<MenuProvider>(context);
-    menuProvider.setuserLocationLatitude("-6.200000");
-    menuProvider.setuserLocationLongitude("106.816666");
+    // menuProvider.setuserLocationLatitude("-6.200000");
+    // menuProvider.setuserLocationLongitude("106.816666");
 
     _myLatitude = double.parse(menuProvider.userLocationLatitude);
     _myLongitude = double.parse(menuProvider.userLocationLongitude);
@@ -84,30 +135,30 @@ class _PaymentTrackState extends State<PaymentTrack> {
     return Scaffold(
         body: Stack(
       children: [
-        // GoogleMap(
-        //   myLocationButtonEnabled: false,
-        //   zoomControlsEnabled: false,
-        //   initialCameraPosition: CameraPosition(
-        //     target: LatLng(_myLatitude, _myLongitude),
-        //     zoom: 15.5,
-        //   ),
-        //   onMapCreated: (controller) => _googleMapController = controller,
-        //   markers: {
-        //     if (_myLocation != null) _myLocation,
-        //   },
-        //   polylines: {
-        //     if (_info != null)
-        //       Polyline(
-        //         polylineId: const PolylineId('overview_polyline'),
-        //         color: Colors.red,
-        //         width: 5,
-        //         points: _info.polylinePoints
-        //             .map((e) => LatLng(e.latitude, e.longitude))
-        //             .toList(),
-        //       ),
-        //   },
-        //   //onLongPress: _addMarker,
-        // ),
+        GoogleMap(
+          myLocationButtonEnabled: false,
+          zoomControlsEnabled: false,
+          initialCameraPosition: CameraPosition(
+            target: LatLng(_myLatitude, _myLongitude),
+            zoom: 15.5,
+          ),
+          onMapCreated: (controller) => _googleMapController = controller,
+          markers: {
+            if (_myLocation != null) _myLocation,
+          },
+          polylines: {
+            if (_info != null)
+              Polyline(
+                polylineId: const PolylineId('overview_polyline'),
+                color: Colors.red,
+                width: 5,
+                points: _info.polylinePoints
+                    .map((e) => LatLng(e.latitude, e.longitude))
+                    .toList(),
+              ),
+          },
+          //onLongPress: _addMarker,
+        ),
         Positioned(
           bottom: 0.0,
           child: Container(

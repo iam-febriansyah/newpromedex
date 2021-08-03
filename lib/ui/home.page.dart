@@ -6,6 +6,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:galeri_teknologi_bersama/common/navigation.dart';
 import 'package:galeri_teknologi_bersama/main.dart';
@@ -33,8 +34,10 @@ class _HomePageState extends State<HomePage> {
   bool isUnauthorized = false;
   // final FirebaseAuth _auth = FirebaseAuth.instance;
 //  FirebaseFirestore firestore = FirebaseFirestore.instance;
-
+  var displayName = "";
   Timer _timer;
+
+  Timer _timerBiodata;
 
   _HomePageState() {
     _timer = new Timer(const Duration(milliseconds: 7000), () {
@@ -70,11 +73,65 @@ class _HomePageState extends State<HomePage> {
               // Container(
               //     margin: const EdgeInsets.only(left: 10, right: 10),
               //     child: menu1(context)),
-              menu01(context)
+              menu01(context),
+              history(context)
             ],
           ),
         ),
       ),
+    );
+  }
+///////////////////////////////////////////////////
+
+  Widget history(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 10),
+      decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 2,
+              blurRadius: 1,
+              offset: Offset(1, 1), // changes position of shadow
+            ),
+          ],
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(9),
+          border: Border.all(
+              width: 1, color: Colors.white, style: BorderStyle.solid)),
+      height: 60.0,
+      width: MediaQuery.of(context).size.width,
+      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        SizedBox(
+          width: 10,
+        ),
+        Icon(
+          FlutterIcons.book_ent,
+          color: Colors.black,
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            "Riwayat Pemesanan ",
+            style: GoogleFonts.mukta(
+              textStyle: TextStyle(
+                color: Colors.black,
+                letterSpacing: 0.5,
+                fontWeight: FontWeight.w600,
+                fontSize: 18,
+              ),
+            ),
+          ),
+        ),
+        Spacer(),
+        Container(
+          height: 25,
+          child: FloatingActionButton(
+            backgroundColor: Colors.green,
+            child: Icon(Icons.chevron_right),
+          ),
+        )
+      ]),
     );
   }
 
@@ -87,7 +144,7 @@ class _HomePageState extends State<HomePage> {
         provider.getEmail;
         provider.getPhone;
 
-        var displayName = provider.name;
+        displayName = provider.name;
 
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

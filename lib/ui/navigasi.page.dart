@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:galeri_teknologi_bersama/data/model/myorder.dart';
 
 import 'package:galeri_teknologi_bersama/main.dart';
 import 'package:galeri_teknologi_bersama/provider/bottomnav.provider.dart';
@@ -21,22 +22,14 @@ class NavPage extends StatefulWidget {
 }
 
 class _NavPageState extends State<NavPage> {
+  bool swabber = false;
+  MyOrder myOrder;
+
   @override
   void initState() {
     super.initState();
 
-    FirebaseMessaging.instance
-        .getInitialMessage()
-        .then((RemoteMessage message) {
-      if (message != null) {
-        Navigator.pushNamed(
-          context,
-          NavPage.routeName,
-        );
-      }
-    });
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       RemoteNotification notification = message.notification;
       AndroidNotification android = message.notification?.android;
       if (notification != null && android != null && !kIsWeb) {
@@ -54,13 +47,91 @@ class _NavPageState extends State<NavPage> {
                 icon: 'launch_background',
               ),
             ));
+
+        //  debugPrint(message.data.toString(), wrapWidth: 1024);
+      }
+      print(" =========== from onMessage.listen");
+      myOrder = new MyOrder();
+      print(" =========== from onMessage.listen");
+      print(message.notification.title);
+      debugPrint(message.data.toString(), wrapWidth: 1024);
+
+      if (message.data['vaNumber'] != null) {
+        if (mounted) {
+          setState(() {
+            myOrder.channel = message.data['channel'];
+            myOrder.clientId = message.data['clientId'];
+            myOrder.expiredTime = message.data['expiredTime'];
+            myOrder.invoiceNumber = message.data['invoiceNumber'];
+            myOrder.status = message.data['status'];
+            myOrder.totalPrice = message.data['totalPrice'];
+            myOrder.vaNumber = message.data['vaNumber'];
+            swabber = true;
+            print(myOrder.vaNumber + "Va  number");
+          });
+        }
       }
     });
 
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('A new onMessageOpenedApp event was published!');
-      Navigator.pushNamed(context, NavPage.routeName);
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+      myOrder = new MyOrder();
+      print(" =========== from onMessage.listen");
+      print(message.notification.title);
+      debugPrint(message.data.toString(), wrapWidth: 1024);
+
+      if (message.data['vaNumber'] != null) {
+        if (mounted) {
+          setState(() {
+            myOrder.channel = message.data['channel'];
+            myOrder.clientId = message.data['clientId'];
+            myOrder.expiredTime = message.data['expiredTime'];
+            myOrder.invoiceNumber = message.data['invoiceNumber'];
+            myOrder.status = message.data['status'];
+            myOrder.totalPrice = message.data['totalPrice'];
+            myOrder.vaNumber = message.data['vaNumber'];
+            swabber = true;
+            print(myOrder.vaNumber + "Va  number");
+          });
+        }
+      }
     });
+
+    // FirebaseMessaging.instance
+    //     .getInitialMessage()
+    //     .then((RemoteMessage message) {
+    //   if (message != null) {
+    //     Navigator.pushNamed(
+    //       context,
+    //       NavPage.routeName,
+    //     );
+    //   }
+    // });
+
+    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    //   RemoteNotification notification = message.notification;
+    //   AndroidNotification android = message.notification?.android;
+    //   if (notification != null && android != null && !kIsWeb) {
+    //     flutterLocalNotificationsPlugin.show(
+    //         notification.hashCode,
+    //         notification.title,
+    //         notification.body,
+    //         NotificationDetails(
+    //           android: AndroidNotificationDetails(
+    //             channel.id,
+    //             channel.name,
+    //             channel.description,
+    //             // TODO add a proper drawable resource to android, for now using
+    //             //      one that already exists in example app.
+    //             icon: 'launch_background',
+    //           ),
+    //         ));
+    //   }
+    // });
+
+    //   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    //   print('A new onMessageOpenedApp event was published!');
+    //   Navigator.pushNamed(context, NavPage.routeName);
+    // });
   }
 
   List<Widget> listWidget = [

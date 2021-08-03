@@ -60,9 +60,11 @@ class LoginProvider extends ChangeNotifier {
         userPreference.setaccesTokenFcm(accesTokenFcm);
 
         userPreference.setaccesToken(_responseLogin.accessToken);
+
         userPreference.setEmail(_responseLogin.dataUser.email);
         userPreference.setPhone(_responseLogin.dataUser.phone);
         userPreference.setName(_responseLogin.dataUser.name);
+
         return _responseLogin;
       }
     } catch (e) {

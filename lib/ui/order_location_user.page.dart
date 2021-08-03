@@ -65,6 +65,9 @@ class _LocationUserPageState extends State<LocationUserPage> {
 
   void onCameraMove(CameraPosition cameraPosition) {
     _locationCamera = cameraPosition.target;
+    _latitude = _locationCamera.latitude;
+    _longitude = _locationCamera.longitude;
+
     // print(_locationCamera);
   }
 
@@ -333,15 +336,15 @@ class _LocationUserPageState extends State<LocationUserPage> {
 
                           dataOrder.transaction = transaction;
 
-                          provider.setuserLocationLatitude(
-                              userLocation.latitude.toString());
+                          provider
+                              .setuserLocationLatitude(_latitude.toString());
 
-                          provider.setuserLocationLongitude(
-                              userLocation.longitude.toString());
+                          provider
+                              .setuserLocationLongitude(_longitude.toString());
 
                           provider.setuserLocationAddres(address.text);
 
-                          provider.fetchListSwabber;
+                          // provider.fetchListSwabber;
 
                           Navigator.pushReplacementNamed(
                               context, OrderProfilPage.routeName,
