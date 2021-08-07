@@ -13,8 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class MenuProvider extends ChangeNotifier {
   final DevService devService;
-  UserPreference userPreference =
-      new UserPreference(sharedPreferences: SharedPreferences.getInstance());
+  UserPreference userPreference;
   MenuProvider({
     this.devService,
   }) {
@@ -66,6 +65,10 @@ class MenuProvider extends ChangeNotifier {
     try {
       _stateMenu = ResultState.Loading;
       notifyListeners();
+
+      userPreference = new UserPreference(
+          sharedPreferences: SharedPreferences.getInstance());
+
       _accesToken = await userPreference.accesToken;
 
       Response result = await devService.menu(_accesToken);
@@ -138,12 +141,16 @@ class MenuProvider extends ChangeNotifier {
   ResultState get stateListSwabber => _stateListSwabber;
   ResponseListSwabber get responseListSwabber => _responseListSwabber;
 
-  //Future<dynamic> get fetchListSwabber => _fetchListSwabber();
+  Future<dynamic> get fetchListSwabber => _fetchListSwabber();
 
   Future<dynamic> _fetchListSwabber() async {
     try {
       _stateListSwabber = ResultState.Loading;
       notifyListeners();
+
+      userPreference = new UserPreference(
+          sharedPreferences: SharedPreferences.getInstance());
+
       _accesToken = await userPreference.accesToken;
 
       final result = await devService.swabber(_accesToken, "", "");
@@ -182,14 +189,17 @@ class MenuProvider extends ChangeNotifier {
       _stateTokenFcm = ResultState.Loading;
       notifyListeners();
 
+      userPreference = new UserPreference(
+          sharedPreferences: SharedPreferences.getInstance());
+
       _accesToken = await userPreference.accesToken;
       var accesTokenFcm = await userPreference.accesTokenFcm;
 
+      // print("token user auth :" + _accesToken);
+      // print("token user fcm :" + accesTokenFcm);
+
       final result =
           await devService.updateTokenFcm(_accesToken, accesTokenFcm);
-
-      print("token user auth :" + _accesToken);
-      print("token user fcm :" + accesTokenFcm);
 
       if (result == null) {
         _stateTokenFcm = ResultState.NoData;

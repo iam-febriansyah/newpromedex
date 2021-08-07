@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:galeri_teknologi_bersama/data/model/bio.dart';
-import 'package:galeri_teknologi_bersama/provider/database_provider.dart';
+import 'package:galeri_teknologi_bersama/provider/pasien_database.provider.dart';
 import 'package:galeri_teknologi_bersama/widget/input_widget.dart';
 import 'package:provider/provider.dart';
 

@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:galeri_teknologi_bersama/common/navigation.dart';
 import 'package:galeri_teknologi_bersama/data/local/bio.sqlite.dart';
+import 'package:galeri_teknologi_bersama/data/local/order.sqlite.dart';
 import 'package:galeri_teknologi_bersama/data/local/user.preference.dart';
 import 'package:galeri_teknologi_bersama/data/model/dataorder.dart';
 
@@ -14,11 +15,13 @@ import 'package:galeri_teknologi_bersama/data/model/paymentresponse.dart';
 import 'package:galeri_teknologi_bersama/data/model/response/login.dart';
 import 'package:galeri_teknologi_bersama/data/model/response/merchant.dart';
 import 'package:galeri_teknologi_bersama/data/remote/firebase.service.dart';
+import 'package:galeri_teknologi_bersama/provider/order_database.provider.dart';
+import 'package:galeri_teknologi_bersama/ui/order_history.page.dart';
 import 'package:galeri_teknologi_bersama/ui/order_track_location.dart';
 import 'package:galeri_teknologi_bersama/ui/unused/speedlab.service.dart';
 import 'package:galeri_teknologi_bersama/data/remote/speedlab/dev.service.dart';
 import 'package:galeri_teknologi_bersama/provider/bottomnav.provider.dart';
-import 'package:galeri_teknologi_bersama/provider/database_provider.dart';
+import 'package:galeri_teknologi_bersama/provider/pasien_database.provider.dart';
 import 'package:galeri_teknologi_bersama/provider/firebase.provider.dart';
 import 'package:galeri_teknologi_bersama/provider/speedlab/login.provider.dart';
 import 'package:galeri_teknologi_bersama/provider/speedlab/payment.provider.dart';
@@ -125,6 +128,11 @@ class MyApp extends StatelessWidget {
           create: (_) => DatabaseProvider(databaseHelper: DatabaseHelper()),
         ),
         ChangeNotifierProvider(
+          create: (_) => DatabaseHistoryOrderProvider(
+              databaseHistoryOrderHelper: DatabaseHistoryOrderHelper()),
+        ),
+
+        ChangeNotifierProvider(
           create: (_) => PaymentProvider(devService: DevService()),
         ),
         ChangeNotifierProvider(
@@ -157,6 +165,7 @@ class MyApp extends StatelessWidget {
             NavPage.routeName: (context) => NavPage(),
             ProfilePage.routeName: (context) => ProfilePage(),
             ListFamilyPage.routeName: (context) => ListFamilyPage(),
+            OrderHistory.routeName: (context) => OrderHistory(),
 
             ///=== Home Care Flow
             LocationUserPage.routeName: (context) => LocationUserPage(

@@ -157,14 +157,21 @@ class _PaymentMethodeState extends State<PaymentMethode> {
                 var transactions = await ftranscation();
                 var transactionsDetails = await ftranscationDetails();
 
-                await provider.setTransactions(transactions);
-                await provider.setTransactionsDetails(transactionsDetails);
-                await provider.fetch;
-
                 if (providerMenu.tagFilter.contains("homecare")) {
+                  await provider.setTransactionshomecare(transactions);
+                  await provider
+                      .setTransactionsDetailshomecare(transactionsDetails);
+
+                  await provider.fetchhomecare;
+
                   Navigator.pushReplacementNamed(
                       context, PaymentTrack.routeName);
                 } else {
+                  await provider.setTransactions(transactions);
+                  await provider.setTransactionsDetails(transactionsDetails);
+
+                  await provider.fetch;
+
                   Navigator.pushReplacementNamed(
                       context, PaymentCompleted.routeName);
                 }

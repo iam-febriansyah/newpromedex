@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:galeri_teknologi_bersama/data/model/bio.dart';
 import 'package:galeri_teknologi_bersama/data/model/dataorder.dart';
-import 'package:galeri_teknologi_bersama/provider/database_provider.dart';
+import 'package:galeri_teknologi_bersama/provider/pasien_database.provider.dart';
 import 'package:galeri_teknologi_bersama/ui/form_family.page.dart';
 import 'package:galeri_teknologi_bersama/ui/order_payment.page.dart';
 import 'package:galeri_teknologi_bersama/utils/result_state.dart';

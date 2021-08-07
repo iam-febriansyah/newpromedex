@@ -11,9 +11,11 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:galeri_teknologi_bersama/common/navigation.dart';
 import 'package:galeri_teknologi_bersama/main.dart';
 import 'package:galeri_teknologi_bersama/provider/firebase.provider.dart';
+import 'package:galeri_teknologi_bersama/provider/order_database.provider.dart';
 import 'package:galeri_teknologi_bersama/provider/preferences.provider.dart';
 import 'package:galeri_teknologi_bersama/provider/speedlab/menu.provider.dart';
 import 'package:galeri_teknologi_bersama/ui/intro/welcome.dart';
+import 'package:galeri_teknologi_bersama/ui/order_history.page.dart';
 import 'package:galeri_teknologi_bersama/ui/unused/login.page.dart';
 import 'package:galeri_teknologi_bersama/ui/navigasi.page.dart';
 import 'package:galeri_teknologi_bersama/ui/profile.page.dart';
@@ -32,6 +34,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool isUnauthorized = false;
+  bool historyState = false;
+
   // final FirebaseAuth _auth = FirebaseAuth.instance;
 //  FirebaseFirestore firestore = FirebaseFirestore.instance;
   var displayName = "";
@@ -74,65 +78,162 @@ class _HomePageState extends State<HomePage> {
               //     margin: const EdgeInsets.only(left: 10, right: 10),
               //     child: menu1(context)),
               menu01(context),
-              history(context)
+              history(context),
+              //   notifOrder()
             ],
           ),
         ),
       ),
     );
   }
+
 ///////////////////////////////////////////////////
+  ///
+  ///
+  Widget notifOrder() {
+    return Consumer<DatabaseHistoryOrderProvider>(
+      builder: (context, provider, _) {
+        if (provider.state == ResultState.Loading) {
+          return Center(child: CircularProgressIndicator());
+        } else if (provider.state == ResultState.HasData) {
+          return ListView.builder(
+            // physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: provider.bookmarks.length,
+            itemBuilder: (context, index) {
+              var data = provider.bookmarks[index];
+
+              return FutureBuilder<bool>(
+                  future: provider.isBookmarked(data.id.toString()),
+                  builder: (context, snapshot) {
+                    var isBookmarked = snapshot.data ?? false;
+
+                    return Column(
+                      children: [
+                        Material(
+                          color: Colors.white,
+                          child: ListTile(
+                            title: Text(
+                              data.invoiceNumber,
+                              style: GoogleFonts.poppins(
+                                textStyle: TextStyle(
+                                    color: Colors.black,
+                                    letterSpacing: 0.5,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                            subtitle: Text(
+                              data.vaNumber,
+                              style: GoogleFonts.poppins(
+                                textStyle: TextStyle(
+                                    color: Colors.blueGrey,
+                                    letterSpacing: 0.1,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                            trailing: isBookmarked
+                                ? IconButton(
+                                    icon: Icon(FlutterIcons.ios_trash_ion),
+                                    color: Colors.black.withOpacity(0.6),
+                                    onPressed: () => provider
+                                        .removeBookmark(data.id.toString()),
+                                  )
+                                : IconButton(
+                                    icon: Icon(Icons.bookmark_border),
+                                    color: Theme.of(context).primaryColorDark,
+                                  ),
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 0, bottom: 0),
+                          height: 5,
+                          color: Colors.grey.withOpacity(0.2),
+                        ),
+                      ],
+                    );
+                  });
+            },
+          );
+        } else if (provider.state == ResultState.NoData) {
+          return Center(
+              child: Text(
+            provider.message,
+            textAlign: TextAlign.center,
+          ));
+        } else if (provider.state == ResultState.Error) {
+          return Center(
+              child: Text(
+            provider.message,
+            textAlign: TextAlign.center,
+          ));
+        } else {
+          return Center(child: Text(''));
+        }
+      },
+    );
+  }
 
   Widget history(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 10),
-      decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              spreadRadius: 2,
-              blurRadius: 1,
-              offset: Offset(1, 1), // changes position of shadow
+    if (historyState == true) {
+      return GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(context, OrderHistory.routeName);
+        },
+        child: Container(
+          margin: EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 10),
+          decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  spreadRadius: 2,
+                  blurRadius: 1,
+                  offset: Offset(1, 1), // changes position of shadow
+                ),
+              ],
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(9),
+              border: Border.all(
+                  width: 1, color: Colors.white, style: BorderStyle.solid)),
+          height: 60.0,
+          width: MediaQuery.of(context).size.width,
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            SizedBox(
+              width: 10,
             ),
-          ],
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(9),
-          border: Border.all(
-              width: 1, color: Colors.white, style: BorderStyle.solid)),
-      height: 60.0,
-      width: MediaQuery.of(context).size.width,
-      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        SizedBox(
-          width: 10,
-        ),
-        Icon(
-          FlutterIcons.book_ent,
-          color: Colors.black,
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            "Riwayat Pemesanan ",
-            style: GoogleFonts.mukta(
-              textStyle: TextStyle(
-                color: Colors.black,
-                letterSpacing: 0.5,
-                fontWeight: FontWeight.w600,
-                fontSize: 18,
+            Icon(
+              FlutterIcons.book_ent,
+              color: Colors.black,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "Riwayat Pemesanan ",
+                style: GoogleFonts.mukta(
+                  textStyle: TextStyle(
+                    color: Colors.black,
+                    letterSpacing: 0.5,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18,
+                  ),
+                ),
               ),
             ),
-          ),
+            Spacer(),
+            Container(
+              height: 25,
+              child: FloatingActionButton(
+                backgroundColor: Colors.green,
+                child: Icon(Icons.chevron_right),
+              ),
+            )
+          ]),
         ),
-        Spacer(),
-        Container(
-          height: 25,
-          child: FloatingActionButton(
-            backgroundColor: Colors.green,
-            child: Icon(Icons.chevron_right),
-          ),
-        )
-      ]),
-    );
+      );
+    } else {
+      return Text("");
+    }
   }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -195,7 +296,7 @@ class _HomePageState extends State<HomePage> {
               height: 40.0,
               child: FloatingActionButton(
                 heroTag: "btn2",
-                backgroundColor: Colors.white,
+                backgroundColor: Color(0xFF43b752),
                 child: ClipOval(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -243,6 +344,13 @@ class _HomePageState extends State<HomePage> {
           ),
         );
       } else if (provider.stateMenu == ResultState.HasData) {
+        if (historyState == false) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            setState(() {
+              historyState = true;
+            });
+          });
+        }
         var data = provider.responseMenu;
         return GridView.builder(
             shrinkWrap: true,
@@ -392,7 +500,7 @@ class _HomePageState extends State<HomePage> {
                       height: 35.0,
                       child: FloatingActionButton(
                         heroTag: "btn3",
-                        backgroundColor: Colors.white,
+                        backgroundColor: Color(0xFF43b752),
                         child: ClipOval(
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),

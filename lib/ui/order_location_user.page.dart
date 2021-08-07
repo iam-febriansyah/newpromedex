@@ -25,7 +25,8 @@ class LocationUserPage extends StatefulWidget {
   _LocationUserPageState createState() => _LocationUserPageState();
 }
 
-class _LocationUserPageState extends State<LocationUserPage> {
+class _LocationUserPageState extends State<LocationUserPage>
+    with WidgetsBindingObserver {
   DataOrderTransaction transaction = new DataOrderTransaction();
   DataOrder dataOrder = new DataOrder();
 
@@ -61,7 +62,9 @@ class _LocationUserPageState extends State<LocationUserPage> {
   }
 
   @override
-  void initState() {}
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+  }
 
   void onCameraMove(CameraPosition cameraPosition) {
     _locationCamera = cameraPosition.target;
@@ -210,9 +213,8 @@ class _LocationUserPageState extends State<LocationUserPage> {
                   Container(
                     padding: const EdgeInsets.only(right: 20),
                     child: FloatingActionButton(
-                      backgroundColor:
-                          Theme.of(context).scaffoldBackgroundColor,
-                      foregroundColor: Colors.black,
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
                       onPressed: () => _googleMapController.animateCamera(
                         _info != null
                             ? CameraUpdate.newLatLngBounds(_info.bounds, 100.0)
@@ -256,8 +258,25 @@ class _LocationUserPageState extends State<LocationUserPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Center(
+                    child: Container(
+                      margin: EdgeInsets.only(top: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.green.withOpacity(0.9),
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(30),
+                          topLeft: Radius.circular(30),
+                          bottomLeft: Radius.circular(30),
+                          bottomRight: Radius.circular(30),
+                        ),
+                      ),
+                      height: 3,
+                      width: 50,
+                    ),
+                  ),
                   Padding(
-                    padding: const EdgeInsets.all(10.0),
+                    padding:
+                        const EdgeInsets.only(top: 15, bottom: 0, left: 10),
                     child: Text(
                       "Kami butuh lokasi anda ",
                       style: GoogleFonts.poppins(
@@ -277,10 +296,12 @@ class _LocationUserPageState extends State<LocationUserPage> {
                         child: Container(
                           height: 50,
                           child: FloatingActionButton(
-                            backgroundColor:
-                                Theme.of(context).scaffoldBackgroundColor,
+                            backgroundColor: Colors.green,
                             foregroundColor: Colors.black,
-                            child: const Icon(Icons.home_work),
+                            child: const Icon(
+                              Icons.home_work,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
@@ -295,7 +316,7 @@ class _LocationUserPageState extends State<LocationUserPage> {
                     ],
                   ),
                   SizedBox(
-                    height: 5.0,
+                    height: 0.0,
                   ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -311,7 +332,7 @@ class _LocationUserPageState extends State<LocationUserPage> {
                     ],
                   ),
                   SizedBox(
-                    height: 30.0,
+                    height: 20.0,
                   ),
                   Expanded(child:
                       Consumer<MenuProvider>(builder: (context, provider, _) {
@@ -419,6 +440,26 @@ class _LocationUserPageState extends State<LocationUserPage> {
         _info = directions;
         //print(_info.bounds);
       });
+    }
+  }
+
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    super.didChangeAppLifecycleState(state);
+    switch (state) {
+      case AppLifecycleState.inactive:
+        print('appLifeCycleState inactive');
+        break;
+      case AppLifecycleState.resumed:
+        _googleMapController.setMapStyle("[]");
+        print('appLifeCycleState resumed');
+        break;
+      case AppLifecycleState.paused:
+        print('appLifeCycleState paused');
+        break;
+      case AppLifecycleState.detached:
+        print('appLifeCycleState detached');
+        break;
     }
   }
 }

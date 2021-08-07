@@ -1,6 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:galeri_teknologi_bersama/data/local/user.preference.dart';
+import 'package:galeri_teknologi_bersama/data/local/user.preference.dart';
 import 'package:galeri_teknologi_bersama/data/model/request/login.dart';
 import 'package:galeri_teknologi_bersama/data/model/response/login.dart';
 import 'package:galeri_teknologi_bersama/data/remote/speedlab/dev.service.dart';
@@ -8,8 +9,7 @@ import 'package:galeri_teknologi_bersama/utils/result_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginProvider extends ChangeNotifier {
-  UserPreference userPreference =
-      new UserPreference(sharedPreferences: SharedPreferences.getInstance());
+  UserPreference userPreference;
 
   final DevService devService;
   FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -54,12 +54,18 @@ class LoginProvider extends ChangeNotifier {
       } else {
         var accesTokenFcm = await messaging.getToken();
 
+        userPreference = new UserPreference(
+            sharedPreferences: SharedPreferences.getInstance());
+
         _state = ResultState.HasData;
         notifyListeners();
         _responseLogin = result;
         userPreference.setaccesTokenFcm(accesTokenFcm);
 
         userPreference.setaccesToken(_responseLogin.accessToken);
+
+        print("token auth user" + await userPreference.accesToken);
+        print("token auth fcm" + await userPreference.accesTokenFcm);
 
         userPreference.setEmail(_responseLogin.dataUser.email);
         userPreference.setPhone(_responseLogin.dataUser.phone);

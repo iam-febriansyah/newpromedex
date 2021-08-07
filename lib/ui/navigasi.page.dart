@@ -4,11 +4,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:galeri_teknologi_bersama/data/model/historyorder.dart';
+import 'package:galeri_teknologi_bersama/data/model/historyorderhomecare.dart';
 import 'package:galeri_teknologi_bersama/data/model/myorder.dart';
 
 import 'package:galeri_teknologi_bersama/main.dart';
 import 'package:galeri_teknologi_bersama/provider/bottomnav.provider.dart';
+import 'package:galeri_teknologi_bersama/provider/order_database.provider.dart';
 import 'package:galeri_teknologi_bersama/provider/speedlab/menu.provider.dart';
+import 'package:galeri_teknologi_bersama/provider/speedlab/payment.provider.dart';
 import 'package:galeri_teknologi_bersama/ui/home.page.dart';
 import 'package:galeri_teknologi_bersama/ui/profile.page.dart';
 import 'package:galeri_teknologi_bersama/ui/unused/switch.page.dart';
@@ -23,7 +27,10 @@ class NavPage extends StatefulWidget {
 
 class _NavPageState extends State<NavPage> {
   bool swabber = false;
-  MyOrder myOrder;
+  // MyOrder myOrder;
+
+  HistoryOrder historyOrder;
+  HistoryOrderHomeCare historyOrderHomeCare;
 
   @override
   void initState() {
@@ -47,91 +54,52 @@ class _NavPageState extends State<NavPage> {
                 icon: 'launch_background',
               ),
             ));
-
-        //  debugPrint(message.data.toString(), wrapWidth: 1024);
       }
-      print(" =========== from onMessage.listen");
-      myOrder = new MyOrder();
-      print(" =========== from onMessage.listen");
+
+      historyOrder = new HistoryOrder();
+      print(" Navigasi Page =========== from onMessage.listen");
       print(message.notification.title);
       debugPrint(message.data.toString(), wrapWidth: 1024);
 
       if (message.data['vaNumber'] != null) {
         if (mounted) {
           setState(() {
-            myOrder.channel = message.data['channel'];
-            myOrder.clientId = message.data['clientId'];
-            myOrder.expiredTime = message.data['expiredTime'];
-            myOrder.invoiceNumber = message.data['invoiceNumber'];
-            myOrder.status = message.data['status'];
-            myOrder.totalPrice = message.data['totalPrice'];
-            myOrder.vaNumber = message.data['vaNumber'];
+            historyOrder.channel = message.data['channel'];
+            historyOrder.clientId = message.data['clientId'];
+            historyOrder.expiredTime = message.data['expiredTime'];
+            historyOrder.invoiceNumber = message.data['invoiceNumber'];
+            historyOrder.status = message.data['status'];
+            historyOrder.totalPrice = message.data['totalPrice'];
+            historyOrder.vaNumber = message.data['vaNumber'];
             swabber = true;
-            print(myOrder.vaNumber + "Va  number");
+            print(historyOrder.vaNumber + "Va  number");
           });
         }
       }
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-      myOrder = new MyOrder();
-      print(" =========== from onMessage.listen");
+      historyOrder = new HistoryOrder();
+      print(" Navigasi Page =========== from onMessageOpenedApp.listen");
       print(message.notification.title);
       debugPrint(message.data.toString(), wrapWidth: 1024);
 
       if (message.data['vaNumber'] != null) {
         if (mounted) {
           setState(() {
-            myOrder.channel = message.data['channel'];
-            myOrder.clientId = message.data['clientId'];
-            myOrder.expiredTime = message.data['expiredTime'];
-            myOrder.invoiceNumber = message.data['invoiceNumber'];
-            myOrder.status = message.data['status'];
-            myOrder.totalPrice = message.data['totalPrice'];
-            myOrder.vaNumber = message.data['vaNumber'];
+            historyOrder.channel = message.data['channel'];
+            historyOrder.clientId = message.data['clientId'];
+            historyOrder.expiredTime = message.data['expiredTime'];
+            historyOrder.invoiceNumber = message.data['invoiceNumber'];
+            historyOrder.status = message.data['status'];
+            historyOrder.totalPrice = message.data['totalPrice'];
+            historyOrder.vaNumber = message.data['vaNumber'];
             swabber = true;
-            print(myOrder.vaNumber + "Va  number");
+            print(historyOrder.vaNumber + "Va  number");
           });
         }
       }
     });
-
-    // FirebaseMessaging.instance
-    //     .getInitialMessage()
-    //     .then((RemoteMessage message) {
-    //   if (message != null) {
-    //     Navigator.pushNamed(
-    //       context,
-    //       NavPage.routeName,
-    //     );
-    //   }
-    // });
-
-    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    //   RemoteNotification notification = message.notification;
-    //   AndroidNotification android = message.notification?.android;
-    //   if (notification != null && android != null && !kIsWeb) {
-    //     flutterLocalNotificationsPlugin.show(
-    //         notification.hashCode,
-    //         notification.title,
-    //         notification.body,
-    //         NotificationDetails(
-    //           android: AndroidNotificationDetails(
-    //             channel.id,
-    //             channel.name,
-    //             channel.description,
-    //             // TODO add a proper drawable resource to android, for now using
-    //             //      one that already exists in example app.
-    //             icon: 'launch_background',
-    //           ),
-    //         ));
-    //   }
-    // });
-
-    //   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    //   print('A new onMessageOpenedApp event was published!');
-    //   Navigator.pushNamed(context, NavPage.routeName);
-    // });
   }
 
   List<Widget> listWidget = [
@@ -142,8 +110,69 @@ class _NavPageState extends State<NavPage> {
   ];
 
   Widget buildAndroid(BuildContext context) {
+    historyOrderHomeCare = new HistoryOrderHomeCare();
+
     var provider = Provider.of<BottomNavigationBarProvider>(context);
+    var providerMenu = Provider.of<MenuProvider>(context);
+
+    var providerPayment = Provider.of<PaymentProvider>(context);
+
     provider.bottomNavBarItems(provider.currentIndex);
+
+    var providerHistoryOrder =
+        Provider.of<DatabaseHistoryOrderProvider>(context);
+
+    if (swabber == true) {
+      Future.delayed(Duration.zero, () {
+        print(historyOrder.invoiceNumber);
+        providerPayment.setInvoice(historyOrder.invoiceNumber);
+
+        print("dari notif " + historyOrder.invoiceNumber);
+        providerPayment.fetchinvoicehomecare;
+        providerPayment.responseInvoiceHomeCare;
+
+        setState(() {
+          if (providerPayment.responseInvoiceHomeCare != null) {
+            // historyOrderHomeCare.idswabber = "55";
+
+            // historyOrderHomeCare.vaNumber = "1291920129";
+
+            // historyOrderHomeCare.expiredTime = "12/01/1990";
+
+            // historyOrderHomeCare.totalPrice = 3144641;
+
+            // historyOrderHomeCare.channel = "BCA";
+
+            print("dari response invoice " +
+                providerPayment
+                    .responseInvoiceHomeCare.dataReservation.invoiceNumber);
+
+            historyOrderHomeCare.invoiceNumber = providerPayment
+                .responseInvoiceHomeCare.dataReservation.invoiceNumber;
+            historyOrderHomeCare.idswabber =
+                providerPayment.responseInvoiceHomeCare.dataSwabber.id;
+
+            historyOrderHomeCare.vaNumber =
+                providerPayment.responseInvoiceHomeCare.dataPayment.vaNumber;
+
+            historyOrderHomeCare.expiredTime = providerPayment
+                .responseInvoiceHomeCare.dataPayment.expiredTime
+                .toString();
+
+            historyOrderHomeCare.totalPrice =
+                providerPayment.responseInvoiceHomeCare.dataPayment.totalPrice;
+            historyOrderHomeCare.channel =
+                providerPayment.responseInvoiceHomeCare.dataPayment.channel;
+            // }
+
+            // swabber = false;
+            providerHistoryOrder.addBookmark(historyOrderHomeCare);
+            providerMenu.fetchListSwabber;
+            swabber = false;
+          }
+        });
+      });
+    }
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       // Use [SystemUiOverlayStyle.light] for white status bar

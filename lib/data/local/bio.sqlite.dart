@@ -18,7 +18,8 @@ class DatabaseHelper {
     var db = openDatabase(
       '$path/d93e38491636a26acc70e8380eaf8d49c89c4979.db',
       onCreate: (db, version) async {
-        await db.execute('''CREATE TABLE $_tblUsers (
+        await db.execute(
+            '''CREATE TABLE $_tblUsers (
               id integer primary key autoincrement, 
       identityNumber TEXT,
    identityParentNumber TEXT,
@@ -38,19 +39,11 @@ class DatabaseHelper {
 
     return db;
   }
-  //  phoneNumber TEXT ,
-  //             email TEXT,
-  //             gender INTEGER,
-  //             birthPlace TEXT,
-  //             birthDate TEXT,
-  //             adress TEXT,
-  //             country TEXT,
 
   Future<Database> get database async {
     if (_database == null) {
       _database = await _initializeDb();
     }
-
     return _database;
   }
 
